@@ -23,7 +23,8 @@ for cat in cats:
     
 
 #figure out location switch later, this next section should be robust for loop
-driver.get("http://www.yelp.com/c/seattle/bagels")
+tes="http://www.yelp.com/c/seattle/bagels"
+driver.get(tes)
 time.sleep(3)
 driver.find_element_by_partial_link_text("Search for more").click()
 time.sleep(3)
@@ -37,13 +38,62 @@ for i in biz:
     time.sleep(1)
     links.append(i.find_element_by_css_selector('a').get_attribute('href'))
 
-print links
+print links # to test
 
 
+#for addtional pages
+addon1="/search?cflt="
+addon2="&amp;find_loc=Seattle%2C+WA%2C+USA&amp;start="
 
+#page 2
+num="10"
+addon1="/search?cflt="
+addon2="&amp;find_loc=Seattle%2C+WA%2C+USA&amp;start="
+test=tes+addon1+cats[0]+addon2+num
+print test
+driver.get(test)
+time.sleep(3)
+biz = driver.find_elements_by_class_name('indexed-biz-name')
+print len(biz)
 
+for i in biz:
+    time.sleep(1)
+    links.append(i.find_element_by_css_selector('a').get_attribute('href'))
 
+print links #to check
+print len(links)
 
+#page 3
+num="20"
+test=tes+addon1+cats[0]+addon2+num
+print test
+driver.get(test)
+time.sleep(3)
+biz = driver.find_elements_by_class_name('indexed-biz-name')
+print len(biz)
+
+for i in biz:
+    time.sleep(1)
+    links.append(i.find_element_by_css_selector('a').get_attribute('href'))
+
+print links #to check
+print len(links)
+
+#page 4
+num="30"
+test=tes+addon1+cats[0]+addon2+num
+print test
+driver.get(test)
+time.sleep(3)
+biz = driver.find_elements_by_class_name('indexed-biz-name')
+print len(biz)
+
+for i in biz:
+    time.sleep(1)
+    links.append(i.find_element_by_css_selector('a').get_attribute('href'))
+
+print links #to check
+print len(links)
 
 
 
@@ -60,7 +110,7 @@ for section in sections:
 
 
 
-driver.quit()
+driver.close()
 
 
 #elem = driver.find_element_by_name("q")
