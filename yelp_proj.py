@@ -12,9 +12,9 @@ time.sleep(3)
 #from IPython.display import HTML
 #HTML("""<img src="data:image/png;base64,{0}">""".format(image))
 
-
-cats=['Bagels',	'Bakeries']#	'Beer, Wine & Spirits']
-"""	'Breweries',	'Bubble Tea',	'Butcher',	'CSA',	'Candy Stores',	'Cheese Shops',	'Chocolatiers & Shops',	'Cideries',	'Coffee & Tea',	'Convenience Stores',	'Cupcakes',	'Desserts',	'Distilleries',	'Do-It-Yourself Food',	'Donuts',	'Empanadas',	'Ethnic Food',	'Ethnic Grocery',	'Farmers Market',	'Food Delivery Services',	'Food Trucks',	'Fruits & Veggies',	'Gelato',	'Grocery',	'Health Markets',	'Herbs & Spices',	'Ice Cream & Frozen Yogurt',	'Internet Cafes',	'Juice Bars & Smoothies',	'Macarons',	'Meat Shops',	'Organic Stores',	'Pasta Shops',	'Popcorn Shops',	'Pretzels',	'Seafood Markets',	'Shaved Ice',	'Specialty Food',	'Street Vendors',	'Tea Rooms',	'Wine Tasting Room',	'Wineries']"""
+"""
+cats=['Bagels',	'Bakeries',	'Beer, Wine & Spirits']
+	'Breweries',	'Bubble Tea',	'Butcher',	'CSA',	'Candy Stores',	'Cheese Shops',	'Chocolatiers & Shops',	'Cideries',	'Coffee & Tea',	'Convenience Stores',	'Cupcakes',	'Desserts',	'Distilleries',	'Do-It-Yourself Food',	'Donuts',	'Empanadas',	'Ethnic Food',	'Ethnic Grocery',	'Farmers Market',	'Food Delivery Services',	'Food Trucks',	'Fruits & Veggies',	'Gelato',	'Grocery',	'Health Markets',	'Herbs & Spices',	'Ice Cream & Frozen Yogurt',	'Internet Cafes',	'Juice Bars & Smoothies',	'Macarons',	'Meat Shops',	'Organic Stores',	'Pasta Shops',	'Popcorn Shops',	'Pretzels',	'Seafood Markets',	'Shaved Ice',	'Specialty Food',	'Street Vendors',	'Tea Rooms',	'Wine Tasting Room',	'Wineries']
 
 
 cat_head=[]
@@ -108,30 +108,34 @@ for x in cat_head:
         
 
 print cat_sites #to test dict store
+"""
 
 #get data from a single page
+driver.get("http://www.yelp.com/biz/blazing-bagels-seattle") #change to dynamic later
+time.sleep(3)
 
+driver.find_element_by_css_selector("[class*='see-more show-all-overlay']").click()
+time.sleep(2)
+driver.find_element_by_css_selector("[class*='biz-shim js-lightbox-media-link']").click()
+time.sleep(2)
 
-"""biz = {}
-for section in sections:
-    section.click()
-    time.sleep(1)
-    content = best.find_element_by_class_name('main-content')
-    sec_name = content.text.split('\n')[0]
-    biz_names = content.find_elements_by_class_name('biz-name')
-    biz_names = [name.text for name in biz_names if name.text]
-    biz[sec_name] = biz_names"""
+count=driver.find_element_by_css_selector("[class*='tab-link js-tab-link tab-link--nav js-tab-link--nav is-selected']").get_attribute('data-media-count')
+count=int(count)
+url={}
+while count>19:
+    abc=driver.find_element_by_css_selector("[class*='photo-box-img']").get_attribute('src')
+    edf=driver.find_element_by_css_selector("[class*='caption selected-photo-caption-text ytype']").text
 
+    print count
+    print abc
+    print edf
 
-
+    driver.find_element_by_css_selector("[class*='i ig-common i-nav-arrow-right-common']").click()
+    time.sleep(2)
+    url.update({edf:abc})
+    count-=1
+    
+print url
 driver.close()
 
 
-#elem = driver.find_element_by_name("q")
-##content = driver.find_element_by_class_name('regular-search-result')
-#elem.send_keys("pycon")
-#elem.send_keys(Keys.RETURN)
-##assert "No results found." not in driver.page_source
-##driver.close()
-
-##print contentbiz
