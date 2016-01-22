@@ -8,27 +8,31 @@ import time
 driver = webdriver.Firefox()
 driver.get("http://www.yelp.com/c/seattle/food") #yelp site
 time.sleep(3)
-#image = driver.get_screenshot_as_base64()
-#from IPython.display import HTML
-#HTML("""<img src="data:image/png;base64,{0}">""".format(image))
 
 """
-cats=['Bagels',	'Bakeries',	'Beer, Wine & Spirits']
-	'Breweries',	'Bubble Tea',	'Butcher',	'CSA',	'Candy Stores',	'Cheese Shops',	'Chocolatiers & Shops',	'Cideries',	'Coffee & Tea',	'Convenience Stores',	'Cupcakes',	'Desserts',	'Distilleries',	'Do-It-Yourself Food',	'Donuts',	'Empanadas',	'Ethnic Food',	'Ethnic Grocery',	'Farmers Market',	'Food Delivery Services',	'Food Trucks',	'Fruits & Veggies',	'Gelato',	'Grocery',	'Health Markets',	'Herbs & Spices',	'Ice Cream & Frozen Yogurt',	'Internet Cafes',	'Juice Bars & Smoothies',	'Macarons',	'Meat Shops',	'Organic Stores',	'Pasta Shops',	'Popcorn Shops',	'Pretzels',	'Seafood Markets',	'Shaved Ice',	'Specialty Food',	'Street Vendors',	'Tea Rooms',	'Wine Tasting Room',	'Wineries']
-
-
 cat_head=[]
-for cat in cats:
-    cat_head.append(driver.find_element_by_link_text(cat).get_attribute('href'))
-
+cate=driver.find_element_by_css_selector("[class*='arrange arrange--12 arrange--wrap arrange--6-units']")
+cate1=cate.find_elements_by_css_selector("[class*='ylist']")
+for i in cate1:
+    cate2=i.find_elements_by_css_selector('a')
+    for j in cate2:
+        cat_head.append(j.get_attribute('href'))
+    
 print cat_head
+
+cats=[]
+for i in cat_head:
+    cats.append(i.rsplit('/',1)[1])
+
+print cats
+
 
 
 cat_sites={} #init empty for dict to hold links
 
 #loop over cat_heads and return websites for each cat head in dict
 j=0
-for x in cat_head:
+for x in cat_head[0:2]:
     #figure out location switch later, this next section should be robust for loop
     tes=x
     driver.get(tes)
@@ -110,6 +114,7 @@ for x in cat_head:
 print cat_sites #to test dict store
 """
 
+
 #get data from a single page
 driver.get("http://www.yelp.com/biz/blazing-bagels-seattle") #change to dynamic later
 time.sleep(3)
@@ -136,6 +141,8 @@ while count>19:
     count-=1
     
 print url
+
+
 driver.close()
 
 
