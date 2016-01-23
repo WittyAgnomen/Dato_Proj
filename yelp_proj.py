@@ -119,6 +119,66 @@ print cat_sites #to test dict store
 driver.get("http://www.yelp.com/biz/blazing-bagels-seattle") #change to dynamic later
 time.sleep(3)
 
+"""
+#grab comp data
+info=[]
+info.append(driver.find_element_by_class_name('biz-page-header-left').find_element_by_tag_name('h1').text)
+info.append(driver.find_element_by_class_name('rating-very-large').find_element_by_tag_name('i').get_attribute('title'))
+info.append(driver.find_element_by_class_name('address').text)
+info.append(driver.find_element_by_class_name('biz-phone').text)
+info.append(driver.find_element_by_class_name('biz-website').find_element_by_tag_name('a').text)
+info.append(driver.find_element_by_css_selector("[class*='nowrap price-description']").text)
+#info.append(driver.find_element_by_class_name('ywidget').find_elements_by_tag_name('li').text) #more business info
+
+print info
+"""
+
+#grab reviews
+
+cur_page=1
+
+
+peeps=[]
+rates=[]
+revs=[]
+
+can=driver.find_element_by_css_selector("[class*='page-of-pages arrange_unit arrange_unit--fill']").text
+cant=int(can[-1:]) #a counter for loopiing through review pages
+
+while cur_page<=cant:
+    peep=driver.find_elements_by_class_name('user-passport-info')
+    for i in peep:
+        peeps.append(i.text)
+
+    rev=driver.find_elements_by_class_name('review-content')
+    for i in rev:
+        rates.append(i.find_element_by_class_name('rating-very-large').find_element_by_tag_name('i').get_attribute('title'))
+        revs.append(i.find_element_by_tag_name('p').text) 
+
+    print len(rates)
+
+    if cur_page<cant:
+        driver.find_element_by_css_selector("[class*='page-option prev-next next']").click()
+        time.sleep(2)
+        cur_page+=1
+    else:
+        cur_page+=1
+
+print len(peeps)
+print len(rates)
+print len(revs)
+print rates
+
+
+#still add dictionary add
+
+"""   
+reviews=dict(zip(peeps,revs))
+print reviews
+"""
+
+"""
+#grab pic urls
 driver.find_element_by_css_selector("[class*='see-more show-all-overlay']").click()
 time.sleep(2)
 driver.find_element_by_css_selector("[class*='biz-shim js-lightbox-media-link']").click()
@@ -141,7 +201,8 @@ while count>19:
     count-=1
     
 print url
-
+"""
+#need to think about storage, possibbly writing as functions
 
 driver.close()
 
