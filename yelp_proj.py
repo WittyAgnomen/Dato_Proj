@@ -11,8 +11,8 @@ from random import randint
 driver = webdriver.Firefox()
 
 """
-driver.get("http://www.yelp.com/c/seattle/food") #yelp site seattle food
-#driver.get("http://www.yelp.com/c/sf/food")
+#driver.get("http://www.yelp.com/c/seattle/food") #yelp site seattle food
+driver.get("http://www.yelp.com/c/sf/food")
 #driver.get("http://www.yelp.com/c/nyc/food")
 time.sleep(3)
 
@@ -123,16 +123,15 @@ for x in cat_head[0:4]:
 
 print cat_sites #to test dict store
 
-filename= 'seattle_pageurls.csv'
+filename= 'sf_pageurls.csv'
 writer = csv.writer(open(filename, 'wb'))
 for key, value in cat_sites.items():
     writer.writerow([key]+ value)
 
 """
 
-
-#get data from a single page
-reader = csv.reader(open('seattle_pageurls.csv', 'rb'))
+#read urls from csv...
+reader = csv.reader(open('sf_pageurls.csv', 'rb'))
 places = []
 for row in reader:
     places.append(row[1:])
@@ -146,54 +145,92 @@ print len(places)
 
 
 
-for p in places[7:135]:
-    driver.get(p) #change to dynamic later
-    time.sleep(randint(1,3))
+for p in places[25:135]:
+    try:
+        driver.get(p) #change to dynamic later
+        time.sleep(randint(1,3))
+    except:
+        print 'loading problem'
+        driver.get(p) #change to dynamic later
+        time.sleep(randint(1,3))
 
-
-    #grab comp data
     info=[]
-    info.append(driver.find_element_by_class_name('biz-page-header-left').find_element_by_tag_name('h1').text.encode('ascii', 'ignore'))
-    info.append(driver.find_element_by_class_name('rating-very-large').find_element_by_tag_name('i').get_attribute('title').encode('ascii', 'ignore'))
-    info.append(driver.find_element_by_class_name('address').text.encode('ascii', 'ignore'))
-    #info.append(driver.find_element_by_class_name('biz-phone').text.encode('ascii', 'ignore'))
-    info.append(driver.find_element_by_class_name('biz-website').find_element_by_tag_name('a').text.encode('ascii', 'ignore'))
-    info.append(driver.find_element_by_css_selector("[class*='nowrap price-description']").text.encode('ascii', 'ignore'))
-    #info.append(driver.find_element_by_class_name('ywidget').find_elements_by_tag_name('li').text) #more business info
 
-    print info
+    try:
+    #grab comp data
+        info.append(driver.find_element_by_class_name('biz-page-header-left').find_element_by_tag_name('h1').text.encode('ascii', 'ignore'))
+        info.append(driver.find_element_by_class_name('rating-very-large').find_element_by_tag_name('i').get_attribute('title').encode('ascii', 'ignore'))
+        info.append(driver.find_element_by_class_name('address').text.encode('ascii', 'ignore'))
+        #info.append(driver.find_element_by_class_name('biz-phone').text.encode('ascii', 'ignore'))
+        info.append(driver.find_element_by_class_name('biz-website').find_element_by_tag_name('a').text.encode('ascii', 'ignore'))
+        info.append(driver.find_element_by_css_selector("[class*='nowrap price-description']").text.encode('ascii', 'ignore'))
+        #info.append(driver.find_element_by_class_name('ywidget').find_elements_by_tag_name('li').text) #more business info
+        
+    except:
+        info.append('error')
+        driver.refresh()
+        time.sleep(randint(1,3))
+    
+    print info #test info
 
 
     #grab reviews
 
     cur_page=1
 
-
     peeps=[]
     rates=[]
     revs=[]
 
-    can=driver.find_element_by_css_selector("[class*='page-of-pages arrange_unit arrange_unit--fill']").text
-    cant=int(can[-2:]) #a counter for loopiing through review pages
-    print cant
+    try:
 
+        can=driver.find_element_by_css_selector("[class*='page-of-pages arrange_unit arrange_unit--fill']").text
+        cant=int(can[-2:]) #a counter for loopiing through review pages
+        print cant
+
+    except:
+        driver.refresh()
+        can=driver.find_element_by_css_selector("[class*='page-of-pages arrange_unit arrange_unit--fill']").text
+        cant=int(can[-2:]) #a counter for loopiing through review pages
+        print cant
+
+    
     while cur_page<=cant:
-        peep=driver.find_elements_by_class_name('user-passport-info')
-        for i in peep:
-            peeps.append(i.text.encode('ascii', 'ignore'))
+        try:
+            peep=driver.find_elements_by_class_name('user-passport-info')
+            for i in peep:
+                peeps.append(i.text.encode('ascii', 'ignore'))
+        
+        except:
+            peeps.append('error')
+            driver.refresh()
+            time.sleep(randint(1,3))
+            
 
-        rev=driver.find_elements_by_class_name('review-content')
-        for i in rev:
-            rates.append(i.find_element_by_class_name('rating-very-large').find_element_by_tag_name('i').get_attribute('title').encode('ascii', 'ignore'))
-            revs.append(i.find_element_by_tag_name('p').text.encode('ascii', 'ignore')) 
+        try:
+            rev=driver.find_elements_by_class_name('review-content')
+            for i in rev:
+                rates.append(i.find_element_by_class_name('rating-very-large').find_element_by_tag_name('i').get_attribute('title').encode('ascii', 'ignore'))
 
-        print len(rates)
+                revs.append(i.find_element_by_tag_name('p').text.encode('ascii', 'ignore')) 
 
-        if cur_page<cant:
-            driver.find_element_by_css_selector("[class*='page-option prev-next next']").click()
-            time.sleep(randint(2,3))
-            cur_page+=1
-        else:
+        except:
+            rates.append('error')
+            revs.append('error')
+            driver.refresh()
+            time.sleep(randint(1,3))
+
+        print len(rates) #test
+
+        try:
+            if cur_page<cant:
+                driver.find_element_by_css_selector("[class*='page-option prev-next next']").click()
+                time.sleep(randint(2,3))
+                cur_page+=1
+            else:
+                cur_page+=1
+
+        except:
             cur_page+=1
 
     #print len(peeps)
@@ -206,33 +243,62 @@ for p in places[7:135]:
 
     zipped=zip(revs,rates)
     reviews=dict(zip(peeps,zipped))
-    print reviews
+    print len(reviews)
 
 
 
     #grab pic urls
-    driver.find_element_by_css_selector("[class*='see-more show-all-overlay']").click()
-    time.sleep(randint(1,3))
-    driver.find_element_by_css_selector("[class*='biz-shim js-lightbox-media-link']").click()
-    time.sleep(2)
+    try:
+        driver.find_element_by_css_selector("[class*='see-more show-all-overlay']").click()
+        time.sleep(randint(1,2))
+        driver.find_element_by_css_selector("[class*='biz-shim js-lightbox-media-link']").click()
+        time.sleep(2)
 
-    count=driver.find_element_by_css_selector("[class*='tab-link js-tab-link tab-link--nav js-tab-link--nav is-selected']").get_attribute('data-media-count')
-    count=int(count)
+
+    except:
+        try:
+            print 'no or few photos'
+            driver.find_element_by_css_selector("[class*='showcase-photo-box']").click()
+            time.sleep(2)
+        except:
+            driver.find_element_by_css_selector("[class*='i ig-biz_details i-more-photos-biz_details']").click()
+            time.sleep(2)
+            driver.find_element_by_css_selector("[class*='biz-shim js-lightbox-media-link']").click()
+            time.sleep(2)
+    
+    try:
+        count=driver.find_element_by_css_selector("[class*='tab-link js-tab-link tab-link--nav js-tab-link--nav is-selected']").get_attribute('data-media-count')
+        count=int(count)
+        count=min(count,50)
+    except:
+        print 'error with photo count'
+
     url={}
     while count>0:
-        abc=driver.find_element_by_css_selector("[class*='photo-box-img']").get_attribute('src')
-        edf=driver.find_element_by_css_selector("[class*='caption selected-photo-caption-text ytype']").text.encode('ascii', 'ignore')
+        try:
+            abc=driver.find_element_by_css_selector("[class*='photo-box-img']").get_attribute('src')
+            edf=driver.find_element_by_css_selector("[class*='caption selected-photo-caption-text ytype']").text.encode('ascii', 'ignore')
+        
+        except:
+            abc= 'error with pic caption'
+            edf= 'error with src'
 
         print count
+        try:
+            driver.find_element_by_css_selector("[class*='i ig-common i-nav-arrow-right-common']").click()
+            time.sleep(randint(1,3))
 
-        driver.find_element_by_css_selector("[class*='i ig-common i-nav-arrow-right-common']").click()
-        time.sleep(randint(1,3))
+        except:
+            driver.refresh()
+            driver.find_element_by_css_selector("[class*='i ig-common i-nav-arrow-right-common']").click()
+            time.sleep(randint(1,3))
+
         url.update({edf:abc})
         count-=1
     
-    print url
+    print url #to test
 
-    filenamed= 'ind_info.csv'
+    filenamed= 'indsf_info.csv'
     writer = csv.writer(open(filenamed, 'a'))
     writer.writerow(info)
     writer.writerow(reviews.keys())
@@ -241,6 +307,7 @@ for p in places[7:135]:
     writer.writerow(url.values())
 
 #need to think about storage, possibbly writing as functions
+
 
 driver.close()
 
