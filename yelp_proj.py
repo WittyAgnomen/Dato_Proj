@@ -131,7 +131,7 @@ for key, value in cat_sites.items():
 """
 
 #read urls from csv...
-reader = csv.reader(open('sf_pageurls.csv', 'rb'))
+reader = csv.reader(open('nyc_pageurls.csv', 'rb'))
 places = []
 for row in reader:
     places.append(row[1:])
@@ -145,7 +145,7 @@ print len(places)
 
 
 
-for p in places[25:135]:
+for p in places:
     try:
         driver.get(p) #change to dynamic later
         time.sleep(randint(1,3))
@@ -298,7 +298,7 @@ for p in places[25:135]:
     
     print url #to test
 
-    filenamed= 'indsf_info.csv'
+    filenamed= 'indnyc_info.csv'
     writer = csv.writer(open(filenamed, 'a'))
     writer.writerow(info)
     writer.writerow(reviews.keys())
